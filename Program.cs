@@ -65,48 +65,48 @@ namespace Trabalho
 			var app = builder.Build();
 			
             // Cadastrar Pessoa
-			app.MapPost("/pessoa", (Base pessoas, Pessoa pessoa) =>
+			app.MapPost("/pessoa", (Base db, Pessoa pessoa) =>
 			{
-				pessoas.Pessoas.Add(pessoa);
-				pessoas.SaveChanges();
+				db.Pessoas.Add(pessoa);
+				db.SaveChanges();
 				return "Pessoa adicionado";
 			});
 			// Listar todos as Pessoa
-			app.MapGet("/pessoas", (Base pessoas) => {
-				return pessoas.Pessoas.ToList();
+			app.MapGet("/pessoas", (Base db) => {
+				return db.Pessoas.ToList();
 			});
             // Listar Pessoas específico (por tipo)
-			app.MapGet("/pessoas/{type}", (Base pessoas, string type) => {
+			app.MapGet("/pessoas/{type}", (Base db, string type) => {
                 if (type == "Veterinario") {
-				    return pessoas.Pessoas.Where(p => p.isVeterinario == true);
+				    return db.Pessoas.Where(p => p.isVeterinario == true);
                 } else {
-				    return pessoas.Pessoas.Where(p => p.isVeterinario == false);
+				    return db.Pessoas.Where(p => p.isVeterinario == false);
                 }
 			});
 			// Listar Pessoa específico (por id)
-			app.MapGet("/pessoa/{id}", (Base pessoas, int id) => {
-				return pessoas.Pessoas.Find(id);
+			app.MapGet("/pessoa/{id}", (Base db, int id) => {
+				return db.Pessoas.Find(id);
 			});
 			// Deletar Pessoa específico (por id)
-			app.MapDelete("/pessoa/{id}", (Base pessoas, int id) => {
-				var vet = pessoas.Pessoas.Find(id);
+			app.MapDelete("/pessoa/{id}", (Base db, int id) => {
+				var vet = db.Pessoas.Find(id);
 				if (vet != null){					
-					pessoas.SaveChanges();
-					pessoas.Pessoas.Remove(vet);
+					db.SaveChanges();
+					db.Pessoas.Remove(vet);
                     return "Pessoa Removido";
 				} else {
                     return "Pessoa não existe"; 
                 }
 			});
             // Atualizar Pessoa
-			app.MapPut("/pessoa/{id}", (Base pessoas, Pessoa pessoa, int id) =>
+			app.MapPut("/pessoa/{id}", (Base db, Pessoa pessoa, int id) =>
 			{
-				var vet = pessoas.Pessoas.Find(id);
+				var vet = db.Pessoas.Find(id);
                 if (vet != null)
                 {
                     vet.nome = pessoa.nome;
                     vet.telefone = pessoa.telefone;
-                    pessoas.SaveChanges();
+                    db.SaveChanges();
                     return "Pessoa atualizado";
                 } else {
                     return "Pessoa não encontrado";
@@ -114,35 +114,35 @@ namespace Trabalho
 			});
 
 			// Cadastrar Paciente
-			app.MapPost("/cadastrarPaciente", (Base pacientes, Paciente paciente) =>
+			app.MapPost("/cadastrarPaciente", (Base db, Paciente paciente) =>
 			{
-				pacientes.Pacientes.Add(paciente);
-				pacientes.SaveChanges();
+				db.Pacientes.Add(paciente);
+				db.SaveChanges();
 				return "Paciente adicionado";
 			});
             // Listar todos as Pacientes
-			app.MapGet("/pacientes", (Base pacientes) => {
-				return pacientes.Pacientes.ToList();
+			app.MapGet("/pacientes", (Base db) => {
+				return db.Pacientes.ToList();
 			});
             // Listar Paciente específico (por id)
-			app.MapGet("/paciente/{id}", (Base pacientes, int id) => {
-				return pacientes.Pacientes.Find(id);
+			app.MapGet("/paciente/{id}", (Base db, int id) => {
+				return db.Pacientes.Find(id);
 			});
             // Deletar Paciente específico (por id)
-			app.MapDelete("/paciente/{id}", (Base pacientes, int id) => {
-				var pac = pacientes.Pacientes.Find(id);
+			app.MapDelete("/paciente/{id}", (Base db, int id) => {
+				var pac = db.Pacientes.Find(id);
 				if (pac != null){					
-					pacientes.SaveChanges();
-					pacientes.Pacientes.Remove(pac);
+					db.SaveChanges();
+					db.Pacientes.Remove(pac);
                     return "Paciente Removido";
 				} else {
                     return "Paciente não existe";
                 }
 			});
             // Atualizar Paciente
-			app.MapPut("/paciente/{id}", (Base pacientes, Paciente paciente, int id) =>
+			app.MapPut("/paciente/{id}", (Base db, Paciente paciente, int id) =>
 			{
-				var pac = pacientes.Pacientes.Find(id);
+				var pac = db.Pacientes.Find(id);
                 if (pac != null)
                 {
                     pac.nome = paciente.nome;
@@ -151,7 +151,7 @@ namespace Trabalho
                     pac.sexo = paciente.sexo;
                     pac.idDono = paciente.idDono;
 
-                    pacientes.SaveChanges();
+                    db.SaveChanges();
                     return "Paciente atualizado";
                 } else {
 					return "Paciente Indisponível";
@@ -159,35 +159,35 @@ namespace Trabalho
 			});
 
 			// Cadastrar agendamento
-			app.MapPost("/agendamento", (Base agendamentos, Agenda agenda) =>
+			app.MapPost("/agendamento", (Base db, Agenda agenda) =>
 			{
 				// ConvertToDateTime(agenda);
-                bool veterinarioIndisponivel = agendamentos.Agendamentos.Where(a => a.dataHora == Convert.ToDateTime(agenda.dataHora) && a.idVeterinario == agenda.idVeterinario).ToList().Count() > 0;
+                bool veterinarioIndisponivel = db.Agendamentos.Where(a => a.dataHora == Convert.ToDateTime(agenda.dataHora) && a.idVeterinario == agenda.idVeterinario).ToList().Count() > 0;
 
                 if (!veterinarioIndisponivel) {
-					agendamentos.Agendamentos.Add(agenda);
-                    agendamentos.SaveChanges();
+					db.Agendamentos.Add(agenda);
+                    db.SaveChanges();
                     return "Agenda adicionada";
                 } else {
                     return "Veterinário Indisponível";
                 }
 			});
             // Listar todos as Agendamentos
-			app.MapGet("/agendamentos", (Base agendamentos) => {
-				return agendamentos.Agendamentos.ToList();
+			app.MapGet("/agendamentos", (Base db) => {
+				return db.Agendamentos.ToList();
 			});
             // Listar Agendamento específico (por id)
-			app.MapGet("/agendamento/{id}", (Base agendamentos, int id) => {
-				return agendamentos.Agendamentos.Find(id);
+			app.MapGet("/agendamento/{id}", (Base db, int id) => {
+				return db.Agendamentos.Find(id);
 			});
 			// Deletar Adentamento
-			app.MapDelete("/agendamento/{id}", (Base agendamentos, int id) =>
+			app.MapDelete("/agendamento/{id}", (Base db, int id) =>
 			{
-                var agenda = agendamentos.Agendamentos.Find(id);
+                var agenda = db.Agendamentos.Find(id);
 
                 if (agenda != null) {
-					agendamentos.Agendamentos.Add(agenda);
-                    agendamentos.SaveChanges();
+					db.Agendamentos.Add(agenda);
+                    db.SaveChanges();
                     return "Agenda removida";
                 } else {
                     return "Agenda Indisponível";
